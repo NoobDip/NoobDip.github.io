@@ -144,10 +144,62 @@
             border-top: 1px solid var(--border-color);
             padding: 20px 0 40px 0;
         }
+        
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 15px;
+            opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 50px;
+        }
     </style>
 </head>
 <body>
 
+    <script>
+        function copyAndToast(event, email, buttonElement) {
+            event.preventDefault();
+            navigator.clipboard.writeText(email).then(() => {
+                
+                const originalText = buttonElement.innerHTML;
+                buttonElement.innerHTML = "Copied: " + email;
+                buttonElement.style.backgroundColor = "var(--accent-color)";
+                buttonElement.style.color = "#ffffff";
+                
+                const toast = document.getElementById("toast");
+                toast.innerHTML = "Email copied to clipboard!";
+                toast.className = "show";
+                
+                setTimeout(() => {
+                    buttonElement.innerHTML = originalText;
+                    buttonElement.style.backgroundColor = "transparent";
+                    buttonElement.style.color = ""; 
+                    toast.className = toast.className.replace("show", "");
+                }, 3000);
+                
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+    </script>
+    
     <nav>
         <a href="#profile">Profile</a>
         <a href="#bioinfo">Bioinformatics & Research</a>
@@ -163,11 +215,12 @@
         </p>
 
         <div class="contact-links">
-            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=2025pmd0056@iitjammu.ac.in" target="_blank" class="contact-btn">Academic Email</a>
+            <a href="#" class="contact-btn" onclick="copyAndToast(event, '2025pmd0056@iitjammu.ac.in', this)">Academic Email</a>
             <a href="https://mail.google.com/mail/?view=cm&fs=1&to=2025pmd0056@iitjammu.ac.in&su=Request%20for%20Personal%20Email" target="_blank" class="contact-btn">Request Personal Email</a>
             <a href="https://github.com/NoobDip" target="_blank" class="contact-btn">GitHub</a>
             <a href="https://orcid.org/0009-0003-6219-0647" target="_blank" class="contact-btn">ORCID</a>
         </div>
+        <div id="toast"></div>
     </header>
 
     <section id="bioinfo">
